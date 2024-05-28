@@ -34,11 +34,9 @@ const Binance = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const clientId =
-        "VT/URn7YJdVNMmFL3nz7yeM0I4TPlSC/cAp89ysqvVsMODfadJitaYLrUuh/7/8/GUC/Ux0O58um8OvQeKdaWdRXTKw5dJpbtmVfYLwMzOOtj1abOzOvFmmNzjfy/pk8";
       try {
         const response = await axios.get(
-          `https://sspmitra.in/encrypt-decrypt/?clientId=${clientId}`
+          `https://sspmitra.in/base/encrypt-decrypt/?clientId=${clientId}`
         );
         setUserData(response.data);
       } catch (error) {
@@ -66,7 +64,7 @@ const Binance = () => {
       setTimeout(async () => {
         try {
           const response = await axios.get(
-            `https://sspmitra.in/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
+            `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
           );
           const data = response.data;
           document
