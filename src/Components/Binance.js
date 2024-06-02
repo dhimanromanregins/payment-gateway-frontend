@@ -16,7 +16,7 @@ const Binance = () => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [paymentstatus, setPaymentstatus] = useState("Payment Completed");
-  const walletAdd = "0xa6462FFBD9CA38f1267E1323218D024F2d19145f";
+  const walletAdd = "0x05EB007739071440158fc9e1CDb43e2626701cdD";
   const [isCopied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -69,7 +69,6 @@ const Binance = () => {
             `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
           );
           const data = response.data;
-          console.log(data, '==================================')
           document
             .getElementById("progressbar")
             .children[2].classList.add("active");
@@ -94,6 +93,9 @@ const Binance = () => {
             setPaymentstatus("Payment Failed");
             SettrxIdexistmessage(true);
           }
+          setTimeout(()=>{
+            window.location.href = userData['redirect_url'] + '?clientId=' + data["clientId"];
+          }, 1500);
         }
       }, 2000);
     } catch (error) {
