@@ -94,7 +94,7 @@ const Binance = () => {
             SettrxIdexistmessage(true);
           }
           setTimeout(()=>{
-            window.location.href = userData['redirect_url'] + '?clientId=' + data["clientId"];
+            window.location.href = userData['redirect_url'];
           }, 1500);
         }
       }, 2000);
