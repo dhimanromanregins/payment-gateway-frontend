@@ -11,6 +11,7 @@ const Binance = () => {
   const [transactionHash, setTransactionHash] = useState("");
   const [hashError, sethashError] = useState(false);
   const [Failedmessage, setFailedmessage] = useState(false);
+  const [trxIdexistmessage, SettrxIdexistmessage] = useState(false);
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -31,7 +32,8 @@ const Binance = () => {
         console.error("Error copying text: ", err);
       });
   };
-
+  const clientId = localStorage.getItem('clientId');
+  console.log(clientId, '======================')
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -67,6 +69,7 @@ const Binance = () => {
             `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
           );
           const data = response.data;
+          console.log(data, '==================================')
           document
             .getElementById("progressbar")
             .children[2].classList.add("active");
@@ -74,7 +77,9 @@ const Binance = () => {
           document.getElementById('js-success-tick').classList.add('--tick-complete');
           document.getElementById('js-success-ring').classList.add('--ring-complete');
           setTimeout(()=>{
-            window.location.href = 'https://www.google.com';
+            window.location.href = userData['redirect_url'] + '?clientId=' + data["clientId"];
+
+
           }, 1500);
         } catch (error) {
           setLoading(false);
@@ -84,6 +89,10 @@ const Binance = () => {
           if (error?.response?.status === 400) {
             setPaymentstatus("Payment Failed");
             setFailedmessage(true);
+          }
+          if (error?.response?.status === 406) {
+            setPaymentstatus("Payment Failed");
+            SettrxIdexistmessage(true);
           }
         }
       }, 2000);
@@ -207,6 +216,14 @@ const Binance = () => {
             >
               We are not able to verify your Payment. Please check your
               transction hash and try again
+            </div>
+          )}
+          {trxIdexistmessage && (
+            <div
+              className="error-message"
+              style={{ color: "red", fontSize: "15px" }}
+            >
+              The Transction Id you are useing is already used. Please enter a new Trasction id.
             </div>
           )}
         </div>
