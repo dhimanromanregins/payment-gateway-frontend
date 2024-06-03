@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import BASE_URL from './Api';
 
 const Main = () => {
     const location = useLocation();
@@ -14,7 +15,7 @@ const Main = () => {
         if (clientId) {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get(`https://sspmitra.in/base/encrypt-decrypt/?clientId=${clientId}`);
+                    const response = await axios.get(`${BASE_URL}/encrypt-decrypt/?clientId=${clientId}`);
                     const data = response.data;     
                     localStorage.setItem('clientId', clientId);
                     setAuthorized(true);

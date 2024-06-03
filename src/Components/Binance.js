@@ -38,9 +38,10 @@ const Binance = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://sspmitra.in/base/encrypt-decrypt/?clientId=${clientId}`
+          `${BASE_URL}/encrypt-decrypt/?clientId=${clientId}`
         );
         setUserData(response.data);
+        console.log(response.data, '000000000000000000000000000000000000000000')
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -66,7 +67,7 @@ const Binance = () => {
       setTimeout(async () => {
         try {
           const response = await axios.get(
-            `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
+            `${BASE_URL}/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
           );
           const data = response.data;
           document
@@ -76,14 +77,17 @@ const Binance = () => {
           document.getElementById('js-success-tick').classList.add('--tick-complete');
           document.getElementById('js-success-ring').classList.add('--ring-complete');
           setTimeout(()=>{
-            window.location.href = userData['redirect_url'] + '?clientId=' + data["clientId"];
-
-
+            const url = userData['redirect_url'] + '?clientId=' + data["clientId"];
+            window.location.href = url;
           }, 1500);
         } catch (error) {
           setLoading(false);
           if (error?.response?.status === 500) {
             payAmount();
+          }
+          if (error?.response?.status === 404) {
+            setPaymentstatus("Payment Failed");
+            setFailedmessage(true);
           }
           if (error?.response?.status === 400) {
             setPaymentstatus("Payment Failed");
@@ -94,8 +98,13 @@ const Binance = () => {
             SettrxIdexistmessage(true);
           }
           setTimeout(()=>{
-            window.location.href = userData['redirect_url'];
-          }, 1500);
+            let id = error.response.data["clientId"];
+            if (id) {
+              const url = userData['redirect_url'] + '?clientId=' + error.response.data["clientId"];
+              window.location.href = url;
+          }
+            
+          }, 3000);
         }
       }, 2000);
     } catch (error) {
