@@ -99,12 +99,14 @@ const Binance = () => {
             SetunderpaidDifference(difference);
             SetunderpaidMessage(true);
             setTransactionHash("")
+          } else {
+            setTimeout(() => {
+              const url =
+                userData["redirect_url"] + "?clientId=" + data["clientId"];
+              window.location.href = url;
+            }, 1500);
           }
-          setTimeout(() => {
-            const url =
-              userData["redirect_url"] + "?clientId=" + data["clientId"];
-            window.location.href = url;
-          }, 1500);
+          
         } catch (error) {
           setLoading(false);
           if (error?.response?.status === 500) {
