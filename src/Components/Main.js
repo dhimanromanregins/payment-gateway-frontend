@@ -63,7 +63,16 @@ const Main = () => {
                 </div>
             </header>
             :
-            <h1>Unauthorized</h1>}
+            <header className="App-header">
+           <img src="uno.jpg" className='icon-acess' alt="Others" />
+            <h1 className="unauthorized-title mt-3">403</h1>
+      <p className="unauthorized-message">Unauthorized Access</p>
+      <p className="unauthorized-description gradient-text">
+        You do not have permission to view this page.
+      </p>
+   
+            </header>
+            }
         </div>
     );
 };

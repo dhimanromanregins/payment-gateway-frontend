@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  overflow-x: hidden;
 }
 a {
   color: #feb47b !important;
@@ -149,7 +150,13 @@ input[type="text"]:focus {
 
 }
 .copy {
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+.copied-text{
+  font-size :14px;
+  margin-left:10px;
 }
 .fa-copy {
   cursor: pointer;
@@ -477,7 +484,7 @@ body {
   max-width: 390px;
   padding-right: 30px;
   background: #0e0e0d;
-  width: 150px;
+
   height: 35px;
 }
 /* navbar code */
@@ -942,5 +949,22 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark {
   100% {
     stroke-dashoffset: 0;
   }
+}
+.icon-acess{
+height:200px;
+width:200px;
+}
+@media (max-width: 480px) {
+  .App-link {
+      width: 150px;
+      height: 35px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+  }
+  #multistepsform #progressbar li {
+  
+    width: 27.33%;
+   
+}
 }
 /* payment success */

@@ -107,24 +107,27 @@ const Binance = () => {
     <div className="App">
       <header className="App-header">
         <div className="main-wrap">
+        
           <div className="copy">
             <div className="payment">
               <div className="datta" contentEditable="false">
                 {walletAdd.slice(0, 7)}...
                 {walletAdd.slice(walletAdd.length - 7, walletAdd.length)}
               </div>
-              <FontAwesomeIcon
+            
+            </div>
+         <div>
+         <FontAwesomeIcon
                 icon={faCopy}
                 onClick={handleCopy}
                 style={{
                   cursor: "pointer",
-                  position: "absolute",
-                  top: 0,
-                  right: "-14px",
+                   fontSize:"16px",
+                marginLeft:"10px",
                 }}
               />
-              {isCopied && <span id="copied">Copied</span>}
-            </div>
+              {isCopied && <span  className="copied-text" id="copied ">Copied</span>}
+         </div>
           </div>
           <div className="pt-4">
             <img
@@ -204,7 +207,7 @@ const Binance = () => {
           </div>
           {showProgressBar && (
             <form id="multistepsform">
-              <ul id="progressbar">
+              <ul  className="p-0 m-0"id="progressbar">
                 <li className="active">Payment Initiated</li>
                 <li>In Progress</li>
                 <li>{paymentstatus}</li>
