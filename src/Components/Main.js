@@ -39,7 +39,7 @@ const Main = () => {
                 <div className='main-wrap-one'>
                     <Link to="/binance">
                         <div className="wallet-icon">
-                            <img src="binance.png" className='icon' alt="Binance" />
+                            <img src="logo-change.png" className='icon' alt="Binance" />
                             <h6 className="gradient text mx-3">Binance</h6>
                         </div>
                     </Link>

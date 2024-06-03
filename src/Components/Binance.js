@@ -15,6 +15,9 @@ const Binance = () => {
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [underpaidButton, SetunderpaidButton] = useState(null);
+  const [underpainMessage, SetunderpaidMessage] = useState(false);
+  const [underpaidDifference, SetunderpaidDifference] = useState(false);
   const [paymentstatus, setPaymentstatus] = useState("Payment Completed");
   const walletAdd = "0x05EB007739071440158fc9e1CDb43e2626701cdD";
   const [isCopied, setCopied] = useState(false);
@@ -32,8 +35,8 @@ const Binance = () => {
         console.error("Error copying text: ", err);
       });
   };
-  const clientId = localStorage.getItem('clientId');
-  console.log(clientId, '======================')
+  const clientId = localStorage.getItem("clientId");
+  console.log(clientId, "======================");
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,7 +44,10 @@ const Binance = () => {
           `${BASE_URL}/encrypt-decrypt/?clientId=${clientId}`
         );
         setUserData(response.data);
-        console.log(response.data, '000000000000000000000000000000000000000000')
+        console.log(
+          response.data,
+          "000000000000000000000000000000000000000000"
+        );
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -70,14 +76,33 @@ const Binance = () => {
             `${BASE_URL}/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
           );
           const data = response.data;
+          const data1 = response.data["payment"];
           document
             .getElementById("progressbar")
             .children[2].classList.add("active");
-          document.getElementById('js-spinner').classList.add('--spinner-complete');
-          document.getElementById('js-success-tick').classList.add('--tick-complete');
-          document.getElementById('js-success-ring').classList.add('--ring-complete');
-          setTimeout(()=>{
-            const url = userData['redirect_url'] + '?clientId=' + data["clientId"];
+          document
+            .getElementById("js-spinner")
+            .classList.add("--spinner-complete");
+          document
+            .getElementById("js-success-tick")
+            .classList.add("--tick-complete");
+          document
+            .getElementById("js-success-ring")
+            .classList.add("--ring-complete");
+          if (data1 === "UnderPaid") {
+            const difference = response.data["difference"];
+            localStorage.setItem('total_amount', data.response.response_data["amount"]);
+            localStorage.setItem('outstanding_amount', difference);
+            setPaymentstatus("Complete Amount was not paid");
+            SetunderpaidButton(true)
+            setLoading(false)
+            SetunderpaidDifference(difference);
+            SetunderpaidMessage(true);
+            setTransactionHash("")
+          }
+          setTimeout(() => {
+            const url =
+              userData["redirect_url"] + "?clientId=" + data["clientId"];
             window.location.href = url;
           }, 1500);
         } catch (error) {
@@ -97,13 +122,15 @@ const Binance = () => {
             setPaymentstatus("Payment Failed");
             SettrxIdexistmessage(true);
           }
-          setTimeout(()=>{
+          setTimeout(() => {
             let id = error.response.data["clientId"];
             if (id) {
-              const url = userData['redirect_url'] + '?clientId=' + error.response.data["clientId"];
+              const url =
+                userData["redirect_url"] +
+                "?clientId=" +
+                error.response.data["clientId"];
               window.location.href = url;
-          }
-            
+            }
           }, 3000);
         }
       }, 2000);
@@ -116,27 +143,29 @@ const Binance = () => {
     <div className="App">
       <header className="App-header">
         <div className="main-wrap">
-        
           <div className="copy">
             <div className="payment">
               <div className="datta" contentEditable="false">
                 {walletAdd.slice(0, 7)}...
                 {walletAdd.slice(walletAdd.length - 7, walletAdd.length)}
               </div>
-            
             </div>
-         <div>
-         <FontAwesomeIcon
+            <div>
+              <FontAwesomeIcon
                 icon={faCopy}
                 onClick={handleCopy}
                 style={{
                   cursor: "pointer",
-                   fontSize:"16px",
-                marginLeft:"10px",
+                  fontSize: "16px",
+                  marginLeft: "10px",
                 }}
               />
-              {isCopied && <span  className="copied-text" id="copied ">Copied</span>}
-         </div>
+              {isCopied && (
+                <span className="copied-text" id="copied ">
+                  Copied
+                </span>
+              )}
+            </div>
           </div>
           <div className="pt-4">
             <img
@@ -153,7 +182,11 @@ const Binance = () => {
           </div>
           <div className="payment">
             <div className="datta" contentEditable="false">
-              Pay:${userData ? userData["Amount"] : 0}
+              {!underpaidButton ? (
+                <span>Pay: ${userData ? userData["Amount"] : 0}</span>
+              ) : (
+                <span>Pay: ${underpaidDifference}</span>
+              )}
             </div>
           </div>
           <br />
@@ -175,48 +208,90 @@ const Binance = () => {
             </div>
           )}
           <div>
-            <button
-              className="App-link"
-              onClick={loading ? null : payAmount}
-              disabled={loading ? true : false}
-              style={{ pointerEvents: loading ? "none" : "auto" }}
-            >
-              {loading ? (
-                <div className="spinner-animate-to-result">
-                  <svg viewBox="0, 0, 100, 100">
-                    <g transform="">
-                      <circle
-                        className="spinner"
-                        id="js-spinner"
-                        stroke-miterlimit="10"
-                        cx="50"
-                        cy="50"
-                        r="44"
-                      />
-                      <polyline
-                        className="tick"
-                        id="js-success-tick"
-                        stroke-miterlimit="10"
-                        points="93,15 49,65 28,42"
-                      />
-                      <svg viewBox="0 0 50 50">
-                        <path
-                          className="success-ring"
-                          id="js-success-ring"
-                          d="M37.06,4.74A23.6,23.6,0,0,0,6.63,8.93a23.32,23.32,0,0,0-.91,29.25,23.34,23.34,0,0,0,29.86,6.06A23.46,23.46,0,0,0,46.1,16.36"
+            {!underpaidButton && (
+              <button
+                className="App-link"
+                onClick={loading ? null : payAmount}
+                disabled={loading ? true : false}
+                style={{ pointerEvents: loading ? "none" : "auto" }}
+              >
+                {loading ? (
+                  <div className="spinner-animate-to-result">
+                    <svg viewBox="0, 0, 100, 100">
+                      <g transform="">
+                        <circle
+                          className="spinner"
+                          id="js-spinner"
+                          stroke-miterlimit="10"
+                          cx="50"
+                          cy="50"
+                          r="44"
                         />
-                      </svg>
-                    </g>
-                  </svg>
-                </div>
-              ) : (
-                "Submit Payment"
-              )}
-            </button>
+                        <polyline
+                          className="tick"
+                          id="js-success-tick"
+                          stroke-miterlimit="10"
+                          points="93,15 49,65 28,42"
+                        />
+                        <svg viewBox="0 0 50 50">
+                          <path
+                            className="success-ring"
+                            id="js-success-ring"
+                            d="M37.06,4.74A23.6,23.6,0,0,0,6.63,8.93a23.32,23.32,0,0,0-.91,29.25,23.34,23.34,0,0,0,29.86,6.06A23.46,23.46,0,0,0,46.1,16.36"
+                          />
+                        </svg>
+                      </g>
+                    </svg>
+                  </div>
+                ) : (
+                  "Submit Payment"
+                )}
+              </button>
+            )}
+            {underpaidButton && (
+              <button
+                className="App-link"
+                onClick={loading ? null : payAmount}
+                disabled={loading ? true : false}
+                style={{ pointerEvents: loading ? "none" : "auto" }}
+              >
+                {loading ? (
+                  <div className="spinner-animate-to-result">
+                    <svg viewBox="0, 0, 100, 100">
+                      <g transform="">
+                        <circle
+                          className="spinner"
+                          id="js-spinner"
+                          stroke-miterlimit="10"
+                          cx="50"
+                          cy="50"
+                          r="44"
+                        />
+                        <polyline
+                          className="tick"
+                          id="js-success-tick"
+                          stroke-miterlimit="10"
+                          points="93,15 49,65 28,42"
+                        />
+                        <svg viewBox="0 0 50 50">
+                          <path
+                            className="success-ring"
+                            id="js-success-ring"
+                            d="M37.06,4.74A23.6,23.6,0,0,0,6.63,8.93a23.32,23.32,0,0,0-.91,29.25,23.34,23.34,0,0,0,29.86,6.06A23.46,23.46,0,0,0,46.1,16.36"
+                          />
+                        </svg>
+                      </g>
+                    </svg>
+                  </div>
+                ) : (
+                  "Re Pay"
+                )}
+              </button>
+            )}
           </div>
           {showProgressBar && (
             <form id="multistepsform">
-              <ul  className="p-0 m-0"id="progressbar">
+              <ul className="p-0 m-0" id="progressbar">
                 <li className="active">Payment Initiated</li>
                 <li>In Progress</li>
                 <li>{paymentstatus}</li>
@@ -237,7 +312,17 @@ const Binance = () => {
               className="error-message"
               style={{ color: "red", fontSize: "15px" }}
             >
-              The Transction Id you are useing is already used. Please enter a new Trasction id.
+              The Transction Id you are useing is already used. Please enter a
+              new Trasction id.
+            </div>
+          )}
+          {underpainMessage && (
+            <div
+              className="error-message"
+              style={{ color: "red", fontSize: "15px" }}
+            >
+              To complete your transaction, please pay the remaining balance of{" "}
+              {underpaidDifference}. Thank you.
             </div>
           )}
         </div>
