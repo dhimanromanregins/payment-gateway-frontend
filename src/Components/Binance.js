@@ -91,8 +91,8 @@ const Binance = () => {
             .classList.add("--ring-complete");
           if (data1 === "UnderPaid") {
             const difference = response.data["difference"];
-            localStorage.setItem('total_amount', data.response.response_data["amount"]);
-            localStorage.setItem('outstanding_amount', difference);
+            // localStorage.setItem('total_amount', data.response.response_data["amount"]);
+            // localStorage.setItem('outstanding_amount', difference);
             setPaymentstatus("Complete Amount was not paid");
             SetunderpaidButton(true)
             setLoading(false)
