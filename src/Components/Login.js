@@ -30,6 +30,7 @@ const Login = () => {
         localStorage.setItem('Access_Token', access_token);
         localStorage.setItem('Refresh_Token', refresh_token);
         localStorage.setItem('user_id', userId);
+        setLoading(false)
         navigate('/dashboard');
       } else {
         setLoginError("Invalid email and Password")
