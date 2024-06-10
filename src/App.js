@@ -31,7 +31,7 @@ function App() {
       <Route path="/footer" element={<Footer />} />
       <Route path="/OtpVerify" element={<OtpVerification/>} />
       <Route path="/forgot" element={<Forgot/>} />
-          <Route path="/" element={<NewComponent />} />
+          <Route path="/" element={<Register />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/Binance" element={<Binance />} />
           <Route path="/navbar" element={<Navbar />} />

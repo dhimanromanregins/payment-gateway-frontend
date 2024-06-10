@@ -56,6 +56,13 @@ const Binance = () => {
     fetchData();
   }, []);
 
+
+
+  const repayment = () => {
+
+    
+  }
+
   const payAmount = () => {
     try {
       if (transactionHash.trim() === "") {
@@ -325,6 +332,7 @@ const Binance = () => {
             >
               To complete your transaction, please pay the remaining balance of{" "}
               {underpaidDifference}. Thank you.
+              <p onClick={repayment}>Click to complete payment</p>
             </div>
           )}
         </div>

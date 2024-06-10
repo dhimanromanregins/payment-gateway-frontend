@@ -10,7 +10,6 @@ const Main = () => {
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const clientId = queryParams.get('clientId');
-        console.log(clientId, '-----------')
 
         if (clientId) {
             const fetchData = async () => {

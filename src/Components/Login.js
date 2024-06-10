@@ -1,19 +1,46 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import OtpVerification from './OtpVerification';
+import axios from 'axios';
+import BASE_URL from './Api';
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
-  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [error , SetError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // Perform login logic here
-    // For demo, just showing OTP verification modal
-    setShowOtpModal(true);
-  };
-
-  const handleCloseOtpModal = () => {
-    setShowOtpModal(false);
+  const handleLogin = async () => {
+    setLoading(true)
+    try {
+      const response = await axios.post(`${BASE_URL}/Weblogin/`, {
+        email: email,
+        password: password,
+      });
+      if (response.status === 200) {
+        toast.success("Registration successful");
+        const access_token = response.data['access_token']
+        const refresh_token = response.data['refresh_token']
+        const userId = response.data["user_id"]
+        localStorage.setItem('Access_Token', access_token);
+        localStorage.setItem('Refresh_Token', refresh_token);
+        localStorage.setItem('user_id', userId);
+        navigate('/dashboard');
+      } else {
+        setLoginError("Invalid email and Password")
+        SetError(true)
+        console.error('Login failed');
+      }
+    } catch (error) {
+      setLoginError("Invalid email or Password")
+      SetError(true)
+      console.error('Error:', error.message);
+    }
   };
 
   return (
@@ -29,14 +56,15 @@ const Login = () => {
                 <h5 className="mb-5">Login to your Account</h5>
                 <Form>
                   <Form.Group controlId="formBasicEmail">
-                    <Form.Control type="email" placeholder="Enter email" />
+                    <Form.Control type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
                   </Form.Group>
                   <Form.Group controlId="formBasicPassword">
-                    <Form.Control type="password" placeholder="Password" />
+                    <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                   </Form.Group>
-                  <Button onClick={handleLogin} className="App-link" type="button">
-                    Login
-                  </Button>
+                  {error && <p className="text-danger">{loginError}</p>}
+                  <Button className="App-link" type="submit" disabled={loading} onClick={handleLogin}>
+                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                      </Button>
                   <p className="mt-3">Don't have an account? <Link to="/register">Register</Link></p>
                   <Link to="/forgot"><p>Forgot password?</p></Link>
                 </Form>
@@ -45,7 +73,7 @@ const Login = () => {
           </Container>
         </div>
       </header>
-    
+      <ToastContainer />
     </div>
   );
 };

@@ -1,96 +1,201 @@
-import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import OtpVerification from './OtpVerification';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import BASE_URL from './Api';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [registrationError, setRegistrationError] = useState('');
+  const [passwordmatch, setPasswordmatch] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
+  const [verificationError, setVerificationError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let interval;
+    if (otpSent && resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [otpSent, resendTimer]);
+
+  const handleResendOtp = async () => {
+    const requestData = {
+      email: email,
+      password: password,
+      confirm_password: confirmPassword,
+    };
+    setLoading(true);
+
+    try {
+      await axios.post(`${BASE_URL}/Webregister/`, requestData);
+      setResendTimer(60);
+    } catch (error) {
+      console.error('Error resending OTP:', error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setRegistrationError("Passwords do not match")
+      setPasswordmatch(true)
       return;
     }
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+
+    setLoading(true); // Start the spinner
+
+    const requestData = {
+      email: email,
+      password: password,
+      confirm_password: confirmPassword,
     };
 
     try {
-      const response = await fetch('https://sspmitra.in/register/', requestOptions);
-      const data = await response.json();
-      console.log(data); // Assuming the API returns some data upon successful registration
+      const response = await axios.post(`${BASE_URL}/Webregister/`, requestData);
 
-      // For demo, just showing OTP verification modal
-      setShowOtpModal(true);
+      if (response.status === 200) {
+        setShowOtpVerification(true);
+        setOtpSent(true);
+      } else {
+        setRegistrationError(response.data.message || 'Registration failed. Please try again.');
+      }
     } catch (error) {
       console.error('Error:', error);
-      // Handle error, show error message, etc.
+      setRegistrationError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCloseOtpModal = () => {
-    setShowOtpModal(false);
+  const handleSubmitOtp = async (e) => {
+    e.preventDefault();
+
+    const requestData = {
+      email: email,
+      password: password,
+      confirm_password: confirmPassword,
+      otp: otp,
+    };
+
+    try {
+      const response = await axios.post(`${BASE_URL}/verify-otp/`, requestData);
+
+      if (response.status === 201) {
+        console.log('OTP verification successful');
+        toast.success("Registration successful");
+        navigate('/dashboard');
+      } 
+      if (response.status === 400) {
+        setVerificationError('Invalid Otp. Please enter correct Otp');
+      } 
+    } catch (error) {
+      console.error('Error:', error);
+      setVerificationError('Invalid OTP');
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="main-wrap-login">
-          <Container >
+          <Container>
             <Row className="register-row">
               <Col md={6} className="d-flex align-items-center justify-content-center">
-                {/* Your registration illustration or image */}
                 <img src="/bitcoin.png" alt="Registration Illustration" className="login-image" />
               </Col>
               <Col md={6}>
-                <h5 className="mb-5">Register an Account</h5>
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="custom-input"
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="custom-input"
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="formBasicConfirmPassword">
-                    <Form.Control
-                      type="password"
-                      placeholder="Confirm Password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="custom-input"
-                      required
-                    />
-                  </Form.Group>
-                  <Button className="App-link" type="submit">
-                    Register
-                  </Button>
-                </Form>
+                {showOtpVerification ? (
+                  <>
+                    <h5 className="mb-5">OTP Verification</h5>
+                    <p>We have sent an email to your email address</p>
+                    <Form onSubmit={handleSubmitOtp}>
+                      <Form.Group controlId="formBasicOtp">
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter OTP"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          className="custom-input"
+                          required
+                        />
+                      </Form.Group>
+                      {verificationError && <p className="text-danger">{verificationError}</p>}
+                      <Button className="App-link" type="submit">
+                        Verify OTP
+                      </Button>
+                    </Form>
+                    <p className="mt-3">
+                      Resend OTP in {resendTimer} seconds
+                      {resendTimer === 0 && (
+                        <Button variant="link" onClick={handleResendOtp}>
+                          Resend OTP
+                        </Button>
+                      )}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h5 className="mb-5">Register an Account</h5>
+                    <Form onSubmit={handleSubmit}>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                          type="email"
+                          placeholder="Enter email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="custom-input"
+                          required
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formBasicPassword">
+                        <Form.Control
+                          type="password"
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="custom-input"
+                          required
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formBasicConfirmPassword">
+                        <Form.Control
+                          type="password"
+                          placeholder="Confirm Password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="custom-input"
+                          required
+                        />
+                      </Form.Group>
+                      {registrationError && <p className="text-danger">{registrationError}</p>}
+                      {passwordmatch && <p className="text-danger">{passwordmatch}</p>}
+                      <Button className="App-link" type="submit" disabled={loading}>
+                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                      </Button>
+                    </Form>
+                  </>
+                )}
               </Col>
             </Row>
           </Container>
         </div>
       </header>
-      <OtpVerification show={showOtpModal} handleClose={handleCloseOtpModal} />
+      <ToastContainer />
     </div>
   );
 };

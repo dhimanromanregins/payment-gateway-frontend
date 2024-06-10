@@ -1,58 +1,172 @@
-import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import OtpVerification from './OtpVerification';
+import React, { useState, useEffect } from "react";
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
+import axios from "axios"; 
+import BASE_URL from "./Api";
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Forgot = () => {
-  const [email, setEmail] = useState('');
-  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [resetPasswordError, setResetPasswordError] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your password recovery logic here
-    console.log('Recovery email sent to:', email);
-    // You can add code here to send a recovery email to the provided email address
+  useEffect(() => {
+    let interval;
+    if (otpSent && resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [otpSent, resendTimer]);
 
-    // For demo, just showing OTP verification modal
-    setShowOtpModal(true);
+  const handleResendOtp = () => {
+    setResendTimer(60);
+    setOtpSent(true);
+    setResetPasswordError(""); 
   };
 
-  const handleCloseOtpModal = () => {
-    setShowOtpModal(false);
+  const handleSubmit = async (e) => {
+    setLoading(true)
+    e.preventDefault();
+    setResetPasswordError(""); 
+
+    try {
+      const response = await axios.post(`${BASE_URL}/forgot-password/`, {
+        email: email,
+      });
+
+      if (response.status === 200) {
+        toast.success("Otp send to email");
+        setShowOtpVerification(true);
+        setOtpSent(true);
+        setLoading(false)
+      } else {
+        setResetPasswordError(response.data.message || "Password reset failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setResetPasswordError("An error occurred. Please try again.");
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    setLoading(true)
+    e.preventDefault();
+    setResetPasswordError(""); // Clear any previous error messages
+
+    try {
+      const response = await axios.post(`${BASE_URL}/reset-password/`, {
+        email: email,
+        otp: otp,
+        new_password: newPassword,
+      });
+
+      if (response.status === 200) {
+        toast.success("Password Reset successfully");
+        const timer = setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+        setLoading(false)
+      } else {
+        setResetPasswordError(response.data.message || "Password reset failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setResetPasswordError("An error occurred. Please try again.");
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="main-wrap-login">
-          <Container className="mt-5">
+          <Container>
             <Row className="forgot-row">
               <Col md={6} className="d-flex align-items-center justify-content-center">
-                {/* Your forgot password illustration or image */}
                 <img src="/bitcoin.png" alt="Forgot Password Illustration" className="login-image" />
               </Col>
               <Col md={6}>
-                <h5 className="mb-5">Forgot Password</h5>
-                <p className="forgot-text">Please enter your email address to <span className="highlight">recover your password.</span></p>
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="custom-input"
-                    />
-                  </Form.Group>
-                  <Button className="App-link" type="submit">
-                    Recover Password
-                  </Button>
-                </Form>
+                {showOtpVerification ? (
+                  <>
+                    <h5 className="mb-5">OTP Verification</h5>
+                    <p>We have sent an email to your email address</p>
+                    <Form onSubmit={handleResetPassword}>
+                      <Form.Group controlId="formBasicOtp">
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter OTP"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          className="custom-input"
+                          required
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formBasicNewPassword">
+                        <Form.Control
+                          type="password"
+                          placeholder="New Password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="custom-input"
+                          required
+                        />
+                      </Form.Group>
+
+                      {resetPasswordError && (
+                        <p className="text-danger">{resetPasswordError}</p>
+                      )}
+                      <Button className="App-link" type="submit" disabled={loading}>
+                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                      </Button>
+                    </Form>
+                    <p className="mt-3">
+                      Resend OTP in {resendTimer} seconds
+                      {resendTimer === 0 && (
+                        <Button variant="link" onClick={handleResendOtp}>
+                          Resend OTP
+                        </Button>
+                      )}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h5 className="mb-5">Forgot Password</h5>
+                    <p className="forgot-text">
+                      Please enter your email address to{" "}
+                      <span className="highlight">recover your password.</span>
+                    </p>
+                    <Form onSubmit={handleSubmit}>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                          type="email"
+                          placeholder="Enter email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="custom-input"
+                        />
+                      </Form.Group>
+                      <Button className="App-link" type="submit" disabled={loading}>
+                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                      </Button>
+                    </Form>
+                  </>
+                )}
               </Col>
             </Row>
           </Container>
         </div>
       </header>
-      <OtpVerification show={showOtpModal} handleClose={handleCloseOtpModal} />
+      <ToastContainer />
     </div>
   );
 };
