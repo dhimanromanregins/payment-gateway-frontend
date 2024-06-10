@@ -5,6 +5,8 @@ import BASE_URL from "./Api";
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Forgot = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +17,7 @@ const Forgot = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +39,7 @@ const Forgot = () => {
   };
 
   const handleSubmit = async (e) => {
-    setLoading(true)
+    setLoading(true);
     e.preventDefault();
     setResetPasswordError(""); 
 
@@ -49,7 +52,7 @@ const Forgot = () => {
         toast.success("Otp send to email");
         setShowOtpVerification(true);
         setOtpSent(true);
-        setLoading(false)
+        setLoading(false);
       } else {
         setResetPasswordError(response.data.message || "Password reset failed. Please try again.");
       }
@@ -60,7 +63,7 @@ const Forgot = () => {
   };
 
   const handleResetPassword = async (e) => {
-    setLoading(true)
+    setLoading(true);
     e.preventDefault();
     setResetPasswordError(""); // Clear any previous error messages
 
@@ -73,10 +76,10 @@ const Forgot = () => {
 
       if (response.status === 200) {
         toast.success("Password Reset successfully");
-        const timer = setTimeout(() => {
+        setTimeout(() => {
           navigate('/login');
         }, 2000);
-        setLoading(false)
+        setLoading(false);
       } else {
         setResetPasswordError(response.data.message || "Password reset failed. Please try again.");
       }
@@ -84,6 +87,10 @@ const Forgot = () => {
       console.error("Error:", error);
       setResetPasswordError("An error occurred. Please try again.");
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(prevShowPassword => !prevShowPassword);
   };
 
   return (
@@ -111,14 +118,20 @@ const Forgot = () => {
                           required
                         />
                       </Form.Group>
-                      <Form.Group controlId="formBasicNewPassword">
+                      <Form.Group controlId="formBasicNewPassword" className="position-relative">
                         <Form.Control
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="New Password"
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                           className="custom-input"
                           required
+                        />
+                        <FontAwesomeIcon
+                          icon={showPassword ? faEyeSlash : faEye}
+                          onClick={toggleShowPassword}
+                          className="position-absolute eye-icon"
+                          style={{ right: 10, top: 10, cursor: 'pointer' }}
                         />
                       </Form.Group>
 
