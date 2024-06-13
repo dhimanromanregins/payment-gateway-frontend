@@ -98,7 +98,7 @@ const Register = () => {
       if (response.status === 201) {
         console.log('OTP verification successful');
         toast.success("Registration successful");
-        navigate('/dashboard');
+        navigate('/');
       } 
       if (response.status === 400) {
         setVerificationError('Invalid Otp. Please enter correct Otp');

@@ -64,7 +64,7 @@ const Login = () => {
                   </Form.Group>
                   {error && <p className="text-danger">{loginError}</p>}
                   <Button className="App-link" type="submit" disabled={loading} onClick={handleLogin}>
-                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                        {loading ? <Spinner animation="border" size="sm" /> : "Login"}
                       </Button>
                   <p className="mt-3">Don't have an account? <Link to="/register">Register</Link></p>
                   <Link to="/forgot"><p>Forgot password?</p></Link>

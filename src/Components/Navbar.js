@@ -64,7 +64,7 @@ const MyNavbar = () => {
           </Nav>
           <Nav>
             <Nav.Link as={Link} to="/login" className="ml-auto custom-link">
-              Login <FontAwesomeIcon icon={faArrowRight} />
+              Logout <FontAwesomeIcon icon={faArrowRight} />
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

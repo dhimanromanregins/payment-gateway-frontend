@@ -23,7 +23,7 @@ function App() {
     <Router>
       <Routes>
       <Route path="/main" element={<Main />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Login />} />
       <Route path="/profile" element={<Profile/>} />
       <Route path="/developer" element={<Developer/>} />
       <Route path="/register" element={<Register />} />
@@ -31,7 +31,7 @@ function App() {
       <Route path="/footer" element={<Footer />} />
       <Route path="/OtpVerify" element={<OtpVerification/>} />
       <Route path="/forgot" element={<Forgot/>} />
-          <Route path="/" element={<Register />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/Binance" element={<Binance />} />
           <Route path="/navbar" element={<Navbar />} />

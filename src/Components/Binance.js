@@ -80,7 +80,7 @@ const Binance = () => {
       setTimeout(async () => {
         try {
           const response = await axios.get(
-            `${BASE_URL}/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
+            `${BASE_URL}/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&api_key=${userData["Api_key"]}&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
           );
           const data = response.data;
           const data1 = response.data["payment"];

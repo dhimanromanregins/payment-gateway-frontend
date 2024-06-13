@@ -74,7 +74,7 @@ const Forgot = () => {
       if (response.status === 200) {
         toast.success("Password Reset successfully");
         const timer = setTimeout(() => {
-          navigate('/login');
+          navigate('/');
         }, 2000);
         setLoading(false)
       } else {
@@ -126,7 +126,7 @@ const Forgot = () => {
                         <p className="text-danger">{resetPasswordError}</p>
                       )}
                       <Button className="App-link" type="submit" disabled={loading}>
-                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                        {loading ? <Spinner animation="border" size="sm" /> : "Reset Password"}
                       </Button>
                     </Form>
                     <p className="mt-3">
@@ -156,7 +156,7 @@ const Forgot = () => {
                         />
                       </Form.Group>
                       <Button className="App-link" type="submit" disabled={loading}>
-                        {loading ? <Spinner animation="border" size="sm" /> : "Register"}
+                        {loading ? <Spinner animation="border" size="sm" /> : "Next"}
                       </Button>
                     </Form>
                   </>
