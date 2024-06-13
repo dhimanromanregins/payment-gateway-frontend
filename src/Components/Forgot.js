@@ -76,13 +76,8 @@ const Forgot = () => {
 
       if (response.status === 200) {
         toast.success("Password Reset successfully");
-<<<<<<< HEAD
         const timer = setTimeout(() => {
           navigate('/');
-=======
-        setTimeout(() => {
-          navigate('/login');
->>>>>>> f654e6cf0d1664a66226cb4941f9fa1010da5707
         }, 2000);
         setLoading(false);
       } else {

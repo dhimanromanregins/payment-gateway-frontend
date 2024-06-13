@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from './Api';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -100,13 +100,8 @@ const Register = () => {
       if (response.status === 201) {
         console.log('OTP verification successful');
         toast.success("Registration successful");
-<<<<<<< HEAD
         navigate('/');
       } 
-=======
-        navigate('/dashboard');
-      }
->>>>>>> f654e6cf0d1664a66226cb4941f9fa1010da5707
       if (response.status === 400) {
         setVerificationError('Invalid Otp. Please enter correct Otp');
       }
