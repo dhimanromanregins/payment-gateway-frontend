@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from './Api';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ const Register = () => {
   const [resendTimer, setResendTimer] = useState(60);
   const [verificationError, setVerificationError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,11 +100,16 @@ const Register = () => {
       if (response.status === 201) {
         console.log('OTP verification successful');
         toast.success("Registration successful");
+<<<<<<< HEAD
         navigate('/');
       } 
+=======
+        navigate('/dashboard');
+      }
+>>>>>>> f654e6cf0d1664a66226cb4941f9fa1010da5707
       if (response.status === 400) {
         setVerificationError('Invalid Otp. Please enter correct Otp');
-      } 
+      }
     } catch (error) {
       console.error('Error:', error);
       setVerificationError('Invalid OTP');
@@ -162,26 +169,36 @@ const Register = () => {
                           required
                         />
                       </Form.Group>
-                      <Form.Group controlId="formBasicPassword">
-                        <Form.Control
-                          type="password"
-                          placeholder="Password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="custom-input"
-                          required
-                        />
+                      <Form.Group controlId="formBasicPassword" className="custom-input">
+                        <div style={{ position: 'relative' }}>
+                          <Form.Control
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                          />
+                          <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }} onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                        </div>
                       </Form.Group>
-                      <Form.Group controlId="formBasicConfirmPassword">
-                        <Form.Control
-                          type="password"
-                          placeholder="Confirm Password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="custom-input"
-                          required
-                        />
+
+                      <Form.Group controlId="formBasicConfirmPassword" className="custom-input">
+                        <div style={{ position: 'relative' }}>
+                          <Form.Control
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                          />
+                          <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }} onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                        </div>
                       </Form.Group>
+
                       {registrationError && <p className="text-danger">{registrationError}</p>}
                       {passwordmatch && <p className="text-danger">{passwordmatch}</p>}
                       <Button className="App-link" type="submit" disabled={loading}>

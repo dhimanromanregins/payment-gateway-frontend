@@ -6,17 +6,20 @@ import BASE_URL from './Api';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [error , SetError] = useState(false);
+  const [error, SetError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await axios.post(`${BASE_URL}/Weblogin/`, {
         email: email,
@@ -30,18 +33,22 @@ const Login = () => {
         localStorage.setItem('Access_Token', access_token);
         localStorage.setItem('Refresh_Token', refresh_token);
         localStorage.setItem('user_id', userId);
-        setLoading(false)
+        setLoading(false);
         navigate('/dashboard');
       } else {
-        setLoginError("Invalid email and Password")
-        SetError(true)
+        setLoginError("Invalid email and Password");
+        SetError(true);
         console.error('Login failed');
       }
     } catch (error) {
-      setLoginError("Invalid email or Password")
-      SetError(true)
+      setLoginError("Invalid email or Password");
+      SetError(true);
       console.error('Error:', error.message);
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(prevShowPassword => !prevShowPassword);
   };
 
   return (
@@ -59,8 +66,19 @@ const Login = () => {
                   <Form.Group controlId="formBasicEmail">
                     <Form.Control type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
                   </Form.Group>
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                  <Form.Group controlId="formBasicPassword" className="position-relative">
+                    <Form.Control
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <FontAwesomeIcon
+                      icon={showPassword ? faEyeSlash : faEye}
+                      onClick={toggleShowPassword}
+                      className="position-absolute eye-icon"
+                      style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }}
+                    />
                   </Form.Group>
                   {error && <p className="text-danger">{loginError}</p>}
                   <Button className="App-link" type="submit" disabled={loading} onClick={handleLogin}>

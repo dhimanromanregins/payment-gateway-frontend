@@ -540,6 +540,7 @@
   .custom-link.nav-link {
     font-size: 18px;
     text-decoration: none !important;
+    margin-right: 10px;
   }
 
   .navbar-nav {
@@ -665,7 +666,7 @@
 
   input#formBasicEmail,input#formBasicPassword,input#formBasicName,
   input#formBasicOtp,input#formBasicConfirmPassword,
-  textarea#formBasicMessage,input#formBasicPhone,input#formWalletAddress{
+  textarea#formBasicMessage,input#formBasicPhone,input#formWalletAddress,input#formBasicFullName{
     background: #0e0e0d;
     color: #fff !important;
     padding-right: 30px;
@@ -994,4 +995,24 @@
   .invalid-feedback {
     color: #dc3545;
     font-size: 80%;
+  }
+  .eye-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  input.custom-input.form-control{
+    position: relative;
+  }
+  
+  /* Style for the eye icon */
+  input.custom-input.form-control span {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
   }
