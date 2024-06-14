@@ -55,10 +55,12 @@ const Forgot = () => {
         setLoading(false);
       } else {
         setResetPasswordError(response.data.message || "Password reset failed. Please try again.");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
       setResetPasswordError("An error occurred. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -128,10 +130,10 @@ const Forgot = () => {
                           required
                         />
                         <FontAwesomeIcon
-                          icon={showPassword ? faEyeSlash : faEye}
+                          icon={showPassword ? faEye : faEyeSlash}
                           onClick={toggleShowPassword}
                           className="position-absolute eye-icon"
-                          style={{ right: 10, top: 10, cursor: 'pointer' }}
+                          style={{ right: 10,  top: '50%', cursor: 'pointer' }}
                         />
                       </Form.Group>
 

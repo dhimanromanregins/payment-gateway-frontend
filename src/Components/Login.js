@@ -38,11 +38,13 @@ const Login = () => {
       } else {
         setLoginError("Invalid email and Password");
         SetError(true);
+        setLoading(false);
         console.error('Login failed');
       }
     } catch (error) {
       setLoginError("Invalid email or Password");
       SetError(true);
+      setLoading(false);
       console.error('Error:', error.message);
     }
   };
@@ -74,7 +76,7 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <FontAwesomeIcon
-                      icon={showPassword ? faEyeSlash : faEye}
+                      icon={showPassword ? faEye : faEyeSlash}
                       onClick={toggleShowPassword}
                       className="position-absolute eye-icon"
                       style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }}

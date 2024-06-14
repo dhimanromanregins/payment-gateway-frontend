@@ -665,7 +665,7 @@
   }
 
   input#formBasicEmail,input#formBasicPassword,input#formBasicName,
-  input#formBasicOtp,input#formBasicConfirmPassword,
+  input#formBasicOtp,input#formBasicConfirmPassword, input#formBasicNewPassword,
   textarea#formBasicMessage,input#formBasicPhone,input#formWalletAddress,input#formBasicFullName{
     background: #0e0e0d;
     color: #fff !important;
@@ -679,7 +679,7 @@
   }
 
   input#formBasicEmail::placeholder,input#formBasicName::placeholder,
-  input#formBasicPassword::placeholder,input#formBasicOtp::placeholder,
+  input#formBasicPassword::placeholder,input#formBasicOtp::placeholder,input#formBasicNewPassword::placeholder,
   input#formBasicConfirmPassword::placeholder ,input#formWalletAddress::placeholder
   ,textarea#formBasicMessage::placeholder,input#formBasicPhone::placeholder,input#formBasicFullName::placeholder
   {

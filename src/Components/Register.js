@@ -19,7 +19,8 @@ const Register = () => {
   const [resendTimer, setResendTimer] = useState(60);
   const [verificationError, setVerificationError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showconfirmPassword, setShowconfirmPassword] = useState(false);  // State to toggle password visibility
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,10 +105,12 @@ const Register = () => {
       } 
       if (response.status === 400) {
         setVerificationError('Invalid Otp. Please enter correct Otp');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error:', error);
       setVerificationError('Invalid OTP');
+      setLoading(false);
     }
   };
 
@@ -174,7 +177,7 @@ const Register = () => {
                             required
                           />
                           <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }} onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            {showPassword ?  <FaEye />:<FaEyeSlash /> }
                           </span>
                         </div>
                       </Form.Group>
@@ -182,14 +185,14 @@ const Register = () => {
                       <Form.Group controlId="formBasicConfirmPassword" className="custom-input">
                         <div style={{ position: 'relative' }}>
                           <Form.Control
-                            type={showPassword ? "text" : "password"}
+                            type={showconfirmPassword ? "text" : "password"}
                             placeholder="Confirm Password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                           />
-                          <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }} onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999' }} onClick={() => setShowconfirmPassword(!showconfirmPassword)}>
+                            {showconfirmPassword ? <FaEye />:<FaEyeSlash />}
                           </span>
                         </div>
                       </Form.Group>

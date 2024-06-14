@@ -36,7 +36,6 @@ const Binance = () => {
       });
   };
   const clientId = localStorage.getItem("clientId");
-  console.log(clientId, "======================");
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,10 +43,6 @@ const Binance = () => {
           `${BASE_URL}/encrypt-decrypt/?clientId=${clientId}`
         );
         setUserData(response.data);
-        console.log(
-          response.data,
-          "000000000000000000000000000000000000000000"
-        );
       } catch (error) {
         console.error("Error fetching data", error);
       }
