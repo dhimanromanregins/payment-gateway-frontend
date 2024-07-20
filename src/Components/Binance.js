@@ -92,7 +92,7 @@ const Binance = () => {
                     document.getElementById('js-success-tick').classList.add('--tick-complete');
                     document.getElementById('js-success-ring').classList.add('--ring-complete');
                     setTimeout(() => {
-                        // window.location.href = userData['Redirect_url'] + '?clientId=' + data["clientId"];
+                        window.location.href = userData['Redirect_url'] + '?clientId=' + data["clientId"];
                     }, 1500);
                 } else {
                     handlePaymentFailure(response);
@@ -119,7 +119,7 @@ const handlePaymentFailure = (response) => {
     }
     setTimeout(() => {
         // Uncomment and use if necessary
-        // window.location.href = userData['redirect_url'];
+        window.location.href = userData['redirect_url'];
     }, 1500);
 };
 
