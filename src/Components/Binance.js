@@ -67,7 +67,7 @@ const Binance = () => {
         const makePaymentRequest = async () => {
             try {
                 const response = await axios.get(
-                    `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0xa6462FFBD9CA38f1267E1323218D024F2d19145f&order_id=${userData["order_id"]}`
+                    `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&api_key=${userData["Api_key"]}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0xa6462FFBD9CA38f1267E1323218D024F2d19145f&order_id=${userData["order_id"]}`
                 );
                 return response;
             } catch (error) {
@@ -92,7 +92,7 @@ const Binance = () => {
                     document.getElementById('js-success-tick').classList.add('--tick-complete');
                     document.getElementById('js-success-ring').classList.add('--ring-complete');
                     setTimeout(() => {
-                        // window.location.href = userData['Redirect_url'] + '?clientId=' + data["clientId"];
+                        window.location.href = userData['Redirect_url'] + '?clientId=' + data["clientId"];
                     }, 1500);
                 } else {
                     handlePaymentFailure(response);
@@ -119,7 +119,7 @@ const handlePaymentFailure = (response) => {
     }
     setTimeout(() => {
         // Uncomment and use if necessary
-        // window.location.href = userData['redirect_url'];
+        window.location.href = userData['redirect_url'];
     }, 1500);
 };
 
