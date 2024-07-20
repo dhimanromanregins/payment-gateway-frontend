@@ -49,59 +49,80 @@ const Binance = () => {
     fetchData();
   }, []);
 
-  const payAmount = () => {
+ const payAmount = async () => {
     try {
-      if (transactionHash.trim() === "") {
-        sethashError(true);
-        return;
-      }
-      sethashError(false);
-      setLoading(true);
-      setShowProgressBar(true);
-      setTimeout(() => {
-        document
-          .getElementById("progressbar")
-          .children[1].classList.add("active");
-      }, 2000);
-      setTimeout(async () => {
-        try {
-          const response = await axios.get(
-            `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0x05EB007739071440158fc9e1CDb43e2626701cdD`
-          );
-          const data = response.data;
-          document
-            .getElementById("progressbar")
-            .children[2].classList.add("active");
-          document.getElementById('js-spinner').classList.add('--spinner-complete');
-          document.getElementById('js-success-tick').classList.add('--tick-complete');
-          document.getElementById('js-success-ring').classList.add('--ring-complete');
-          setTimeout(()=>{
-            window.location.href = userData['redirect_url'] + '?clientId=' + data["clientId"];
-
-
-          }, 1500);
-        } catch (error) {
-          setLoading(false);
-          if (error?.response?.status === 500) {
-            payAmount();
-          }
-          if (error?.response?.status === 400) {
-            setPaymentstatus("Payment Failed");
-            setFailedmessage(true);
-          }
-          if (error?.response?.status === 406) {
-            setPaymentstatus("Payment Failed");
-            SettrxIdexistmessage(true);
-          }
-          setTimeout(()=>{
-            window.location.href = userData['redirect_url'];
-          }, 1500);
+        if (transactionHash.trim() === "") {
+            sethashError(true);
+            return;
         }
-      }, 2000);
+        sethashError(false);
+        setLoading(true);
+        setShowProgressBar(true);
+        setTimeout(() => {
+            document
+                .getElementById("progressbar")
+                .children[1].classList.add("active");
+        }, 2000);
+
+        const makePaymentRequest = async () => {
+            try {
+                const response = await axios.get(
+                    `https://sspmitra.in/base/api/paymentbinance/?userId=${userData["userId"]}&transactionID=${transactionHash}&original_amount=${userData["Amount"]}&success_url=https%3A%2F%2Fwww.google.com%2F&failure_url=https%3A%2F%2Fwww.facebook.com%2F&fundpip_wallet_address=0xa6462FFBD9CA38f1267E1323218D024F2d19145f&order_id=${userData["order_id"]}`
+                );
+                return response;
+            } catch (error) {
+                if (error.response?.status === 500) {
+                    console.log('Retrying request due to server error...');
+                    return makePaymentRequest();
+                }
+                throw error;
+            }
+        };
+
+        setTimeout(async () => {
+            try {
+                const response = await makePaymentRequest();
+                const data = response.data.response_data["status"];
+                console.log(data, '===================', userData['Redirect_url']);
+
+                if (data === true) {
+                    document.getElementById("progressbar")
+                        .children[2].classList.add("active");
+                    document.getElementById('js-spinner').classList.add('--spinner-complete');
+                    document.getElementById('js-success-tick').classList.add('--tick-complete');
+                    document.getElementById('js-success-ring').classList.add('--ring-complete');
+                    setTimeout(() => {
+                        // window.location.href = userData['Redirect_url'] + '?clientId=' + data["clientId"];
+                    }, 1500);
+                } else {
+                    handlePaymentFailure(response);
+                }
+            } catch (error) {
+                console.error('Payment request failed', error);
+                setLoading(false);
+            }
+        }, 2000);
     } catch (error) {
-      setLoading(false);
+        console.error('Error in payAmount function', error);
+        setLoading(false);
     }
-  };
+};
+
+const handlePaymentFailure = (response) => {
+    if (response?.status === 406) {
+        setPaymentstatus("Payment Failed");
+        trxIdexistmessage(true);
+    }
+    if (response?.status === 404) {
+        setPaymentstatus("Payment Failed");
+        setFailedmessage(true);
+    }
+    setTimeout(() => {
+        // Uncomment and use if necessary
+        // window.location.href = userData['redirect_url'];
+    }, 1500);
+};
+
 
   return (
     <div className="App">
