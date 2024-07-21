@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import OtpVerification from './OtpVerification';
 
 const Register = () => {
@@ -12,25 +15,26 @@ const Register = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
+
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      email: email,
+      password: password,
+      confirm_password:confirmPassword
     };
 
     try {
-      const response = await fetch('https://sspmitra.in/register/', requestOptions);
-      const data = await response.json();
+      const response = await axios.post('https://sspmitra.in/base/Webregister/', requestOptions);
+      const data = response.data;
       console.log(data); // Assuming the API returns some data upon successful registration
 
       // For demo, just showing OTP verification modal
       setShowOtpModal(true);
     } catch (error) {
       console.error('Error:', error);
-      // Handle error, show error message, etc.
+      toast.error('Registration failed. Please try again.');
     }
   };
 
@@ -42,7 +46,7 @@ const Register = () => {
     <div className="App">
       <header className="App-header">
         <div className="main-wrap-login">
-          <Container >
+          <Container>
             <Row className="register-row">
               <Col md={6} className="d-flex align-items-center justify-content-center">
                 {/* Your registration illustration or image */}
@@ -91,6 +95,7 @@ const Register = () => {
         </div>
       </header>
       <OtpVerification show={showOtpModal} handleClose={handleCloseOtpModal} />
+      <ToastContainer />
     </div>
   );
 };
