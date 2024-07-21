@@ -78,12 +78,11 @@ const Binance = () => {
                 throw error;
             }
         };
-
         setTimeout(async () => {
             try {
                 const response = await makePaymentRequest();
                 const data = response.data.response_data["status"];
-                console.log(data, '===================', userData['Redirect_url']);
+                console.log(data, '------------------')
 
                 if (data === true) {
                     document.getElementById("progressbar")
@@ -111,7 +110,7 @@ const Binance = () => {
 const handlePaymentFailure = (response) => {
     if (response?.status === 406) {
         setPaymentstatus("Payment Failed");
-        trxIdexistmessage(true);
+        SettrxIdexistmessage(true);
     }
     if (response?.status === 404) {
         setPaymentstatus("Payment Failed");
